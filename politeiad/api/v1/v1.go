@@ -28,6 +28,7 @@ const (
 	UpdateVettedMetadataRoute = "/v1/updatevettedmd/" // Update vetted metadata
 	GetUnvettedRoute          = "/v1/getunvetted/"    // Retrieve unvetted record
 	GetVettedRoute            = "/v1/getvetted/"      // Retrieve vetted record
+	PluginRoute               = "/v1/plugin/"         // Send a command to a plugin
 
 	// Auth required
 	InventoryRoute         = "/v1/inventory/"         // Inventory records
@@ -351,4 +352,28 @@ type UserErrorReply struct {
 // server logs.
 type ServerErrorReply struct {
 	ErrorCode int64 `json:"code"` // Server error code
+}
+
+// PluginSettings is a structure that holds key/value pairs of plugin settings.
+type PluginSettings struct {
+	Key   string `json:"key"`   // Name of setting
+	Value string `json:"value"` // Value of setting
+}
+
+// Plugin describes a plugin and its settings.
+type Plugin struct {
+	Name     string           `json:"name"`     // Human readable plugin name
+	Route    string           `json:"route"`    // Route of plugin (appended to /v1/plugin)
+	Settings []PluginSettings `json:"settings"` // Plugin settings
+}
+
+// PluginInventory retrieves all active plugins and their settings.
+type PluginInventory struct {
+	Challenge string `json:"challenge"` // Random challenge
+}
+
+// PluginInventoryReply returns all plugins and their settings.
+type PluginInventoryReply struct {
+	Response string   `json:"response"` // Challenge response
+	Plugins  []Plugin `json:"plugins"`  // Plugins and their settings
 }
