@@ -12,10 +12,13 @@ RUN mkdir -p $GOPATH/src/github.com/decred/politeia
 ADD . $GOPATH/src/github.com/decred/politeia
 WORKDIR $GOPATH/src/github.com/decred/politeia
 
+# Setup politeiad conf file
 RUN mkdir -p $HOME/.politeiad/
 RUN cp ./politeiad/sample-politeiad.conf $HOME/.politeiad/politeiad.conf
 
+# Configure Git backend
 RUN git config --global user.name "Test User"
 RUN git config --global user.email "testuser@example.com"
 
-CMD bash -c "dep ensure && go install -v ./... && LOGFLAGS=shortfile politeiad --testnet --rpcuser=user --rpcpass=pass"
+# Launch politeiad
+CMD bash -c "dep ensure && go install -v ./... && LOGFLAGS=shortfile politeiad --testnet --rpcuser=user --rpcpass=pass && go install -v github.com/decred/politeia/politeiad/cmd/politeia"
