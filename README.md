@@ -58,7 +58,9 @@ https://github.com/decred/politeiagui
 * politeiawww/cmd/politeiawww_refclient - Reference implementation for WWW API.
 * util - common used miscellaneous utility functions.
 
-## Example
+## Example Usage
+
+### Configure paywall functionality
 
 The paywall functionality of politeia requires a master public key for an
 account to derive payment addresses.  You may either use one of the
@@ -72,15 +74,33 @@ dcrctl --wallet --testnet createnewaccount politeiapayments
 dcrctl --wallet --testnet getmasterpubkey politeiapayments
 ```
 
-Compile and launch the politeia daemon:
+### Compile and launch the politeia daemon (`politeiad`) via Docker:
+
+* Install Docker Community Edition: https://www.docker.com/community-edition
+* To start politeia daemon:
 ```
-cd $GOPATH/src/github.com/decred/politeia
-dep ensure && go install -v ./... && LOGFLAGS=shortfile politeiad --testnet --rpcuser=user --rpcpass=pass
+$ docker build -t politeiad -f Dockerfile.politeiad . 
+$ docker run politead
+```
+* To stop politeia daemon:
+```
+$ docker stop politead
 ```
 
-Download server identity to client:
+### Interact with `politeiad` via Command Line Tool
+
+* Ensure `politeiad` container is running (See previous section).
 ```
-politeia -v -testnet -rpchost 127.0.0.1 identity
+$ docker ps -a
+CONTAINER ID        IMAGE                               COMMAND                  CREATED             STATUS                      PORTS                    NAMES
+76d704c3d8f6        politeiad                           "/bin/sh -c 'bash ..."   4 seconds ago       Up 3 seconds                                         happy_montalcini
+
+$ docker exec -it <politeiad CONTAINER_ID> bash
+```
+
+* Download server identity to client:
+```
+$ politeia -v -testnet -rpchost 127.0.0.1 identity
 ```
 Accept default path by pressing `enter`.
 
@@ -96,14 +116,11 @@ Save to /Users/marco/Library/Application Support/Politeia/identity.json or ctrl-
 Identity saved to: /Users/marco/Library/Application Support/Politeia/identity.json
 ```
 
-Compile politeia command line tool:
-```
-go install -v github.com/decred/politeia/politeiad/cmd/politeia
-```
+#### `politeiad` commands via Command Line Tool
 
-Send proposal:
+##### Send proposal
 ```
-politeia -v -testnet -rpchost 127.0.0.1 new "My awesome proposal" proposal.txt spec.txt
+$ politeia -v -testnet -rpchost 127.0.0.1 new "My awesome proposal" proposal.txt spec.txt
 ```
 
 Result will look something like:
@@ -116,17 +133,16 @@ Censorship record:
   Token    : 6284c5f8fba5665373b8e6651ebc8747b289fed242d2f880f64a284496bb4ca8
   Signature: 82d69b4ec83d2a732fe92028dbf78853d0814aeb4fcf0ff597c110c8843720951f7b9fae4305b0f1d9346c39bc960a364590236f9e0871f6f79860fc57d4c70a
 ```
-
-Publishing a proposal (requires credentials):
+##### Publishing a proposal (requires credentials)
 ```
-politeia -testnet -rpchost 127.0.0.1 -rpcuser user -rpcpass pass setunvettedstatus publish 6284c5f8fba5665373b8e6651ebc8747b289fed242d2f880f64a284496bb4ca8
+$ politeia -testnet -rpchost 127.0.0.1 -rpcuser user -rpcpass pass setunvettedstatus publish 6284c5f8fba5665373b8e6651ebc8747b289fed242d2f880f64a284496bb4ca8
 Set proposal status:
   Status   : public
 ```
 
-Censoring a proposal (requires credentials):
+##### Censoring a proposal (requires credentials)
 ```
-politeia -testnet -rpchost 127.0.0.1 -rpcuser user -rpcpass pass setunvettedstatus censor 527cb21b78a56d597f5ab4c199195343ecfcd56cf0d76910b2a63c97635a6532
+$ politeia -testnet -rpchost 127.0.0.1 -rpcuser user -rpcpass pass setunvettedstatus censor 527cb21b78a56d597f5ab4c199195343ecfcd56cf0d76910b2a63c97635a6532
 Set proposal status:
   Status   : censored
 ```
@@ -136,7 +152,7 @@ the `politeia_verify` tool and provide politeiad's public key, the proposal's
 censorship token and signature, and the proposal files:
 
 ```
-politeia_verify -v -k dfd6caacf0bbe5725efc67e703e912c37931b4edbf17122947a1e0fcd9755f6d -t 6284c5f8fba5665373b8e6651ebc8747b289fed242d2f880f64a284496bb4ca8 -s 82d69b4ec83d2a732fe92028dbf78853d0814aeb4fcf0ff597c110c8843720951f7b9fae4305b0f1d9346c39bc960a364590236f9e0871f6f79860fc57d4c70 proposal.md
+$ politeia_verify -v -k dfd6caacf0bbe5725efc67e703e912c37931b4edbf17122947a1e0fcd9755f6d -t 6284c5f8fba5665373b8e6651ebc8747b289fed242d2f880f64a284496bb4ca8 -s 82d69b4ec83d2a732fe92028dbf78853d0814aeb4fcf0ff597c110c8843720951f7b9fae4305b0f1d9346c39bc960a364590236f9e0871f6f79860fc57d4c70 proposal.md
 Proposal successfully verified.
 ```
 
@@ -152,7 +168,7 @@ Proposal failed verification. Please ensure the public key and merkle are correc
 **Note:** All politeia commands can dump the JSON output of every RPC command
 by adding the -json command line flag.
 
-Compile and launch the web server:
+### Compile and launch the web server (`politeiawww`)
 ```
 cd $GOPATH/src/github.com/decred/politeia
 dep ensure && go install -v ./... && LOGFLAGS=shortfile politeiawww --testnet --fetchidentity
