@@ -1,18 +1,21 @@
 FROM phusion/baseimage
 
+ENV GOPATH=/code
+ENV PATH=$PATH:/usr/lib/go-1.9/bin:$GOPATH/bin
+
 RUN add-apt-repository ppa:gophers/archive
 RUN apt-get update && \
     apt-get --yes --no-install-recommends install git golang-1.9-go
-
-ENV GOPATH=/code
-RUN echo $GOPATH
-ENV PATH=$PATH:/usr/lib/go-1.9/bin:$GOPATH/bin
-RUN echo $PATH
+RUN go get -u github.com/golang/dep/cmd/dep
 
 RUN mkdir -p $GOPATH/src/github.com/decred/politeia
 ADD . $GOPATH/src/github.com/decred/politeia
 WORKDIR $GOPATH/src/github.com/decred/politeia
 
-RUN go get -u github.com/golang/dep/cmd/dep
+RUN mkdir -p $HOME/.politeiad/
+RUN cp ./politeiad/sample-politeiad.conf $HOME/.politeiad/politeiad.conf
+
+RUN git config --global user.name "Test User"
+RUN git config --global user.email "testuser@example.com"
 
 CMD bash -c "dep ensure && go install -v ./... && LOGFLAGS=shortfile politeiad --testnet --rpcuser=user --rpcpass=pass"
