@@ -16,9 +16,9 @@ RUN mkdir -p $GOPATH/src/github.com/decred/politeia
 ADD . $GOPATH/src/github.com/decred/politeia
 WORKDIR $GOPATH/src/github.com/decred/politeia
 
-# Setup politeiad conf file
-RUN mkdir -p $HOME/.politeiad/
-RUN cp ./politeiad/sample-politeiad.conf $HOME/.politeiad/politeiad.conf
+# Setup politeiawww conf file
+RUN mkdir -p $HOME/.politeiawww/
+RUN cp ./politeiawww/sample-politeiawww.conf $HOME/.politeiawww/politeiawww.conf
 
-# Launch politeiad
-CMD bash -c "dep ensure && go install -v ./... && LOGFLAGS=shortfile politeiad --testnet --rpcuser=user --rpcpass=pass && go install -v github.com/decred/politeia/politeiad/cmd/politeia"
+# Launch politeiawww
+CMD bash -c "dep ensure && go install -v ./... && LOGFLAGS=shortfile politeiawww --testnet --fetchidentity && politeiawww --testnet --rpcuser=user --rpcpass=pass"
