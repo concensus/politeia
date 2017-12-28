@@ -19,6 +19,8 @@ WORKDIR $GOPATH/src/github.com/decred/politeia
 # Setup politeiawww conf file
 RUN mkdir -p $HOME/.politeiawww/
 RUN cp ./politeiawww/sample-politeiawww.conf $HOME/.politeiawww/politeiawww.conf
+RUN cp ./politeiawww/server.key $HOME/.politeiawww/rpc.key
+RUN cp ./politeiawww/server.crt $HOME/.politeiawww/rpc.cert
 
 # Launch politeiawww
 CMD bash -c "dep ensure && go install -v ./... && LOGFLAGS=shortfile politeiawww --testnet --fetchidentity && politeiawww --testnet --rpcuser=user --rpcpass=pass"
