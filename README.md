@@ -84,7 +84,7 @@ $ docker run politead
 ```
 * To stop politeia daemon:
 ```
-$ docker stop politead
+$ docker stop <politeiad CONTAINER_ID>
 ```
 
 ### Interact with `politeiad` via Command Line Tool
