@@ -326,6 +326,7 @@ func loadConfig() (*config, []string, error) {
 		CookieKeyFile: defaultCookieKeyFile,
 		PaywallAmount: defaultPaywallAmount,
 		Version:       version(),
+		PaywallXpub:   "tpubVobLtToNtTq6TZNw4raWQok35PRPZou53vegZqNubtBTJMMFmuMpWybFCfweJ52N8uZJPZZdHE5SRnBBuuRPfC5jdNstfKjiAs8JtbYG9jx",
 	}
 
 	// Service options which are only added on Windows.
